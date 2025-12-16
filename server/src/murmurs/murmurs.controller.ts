@@ -6,38 +6,63 @@ export class MurmursController {
   constructor(private readonly murmursService: MurmursService) { }
 
   @Post('me/:userId')
-  create(@Param('userId') userId: string, @Body('text') text: string) {
+  async create(@Param('userId') userId: string, @Body('text') text: string) {
     try {
-      return this.murmursService.createMurmur(+userId, text);
+      return await this.murmursService.createMurmur(+userId, text);
     } catch (error) {
       throw new BadRequestException(error.message);
     }
   }
-  @Get('/:userId')
-  getMurmurs(@Param('userId') userId: string) {
-    return this.murmursService.getMurmurs(+userId);
-  }
+
   @Delete('me/:userId/:murmurId')
-  delete(@Param('userId') userId: string, @Param('murmurId') murmurId: string) {
-    return this.murmursService.deleteMurmur(+userId, +murmurId);
+  async delete(@Param('userId') userId: string, @Param('murmurId') murmurId: string) {
+    try {
+      return await this.murmursService.deleteMurmur(+userId, +murmurId);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   @Post('like/:userId/:murmurId')
-  like(@Param('userId') userId: string, @Param('murmurId') murmurId: string) {
-    return this.murmursService.likeMurmur(+userId, +murmurId);
+  async like(@Param('userId') userId: string, @Param('murmurId') murmurId: string) {
+    try {
+      return await this.murmursService.likeMurmur(+userId, +murmurId);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   @Delete('like/:userId/:murmurId')
-  unlike(@Param('userId') userId: string, @Param('murmurId') murmurId: string) {
-    return this.murmursService.unlikeMurmur(+userId, +murmurId);
+  async unlike(@Param('userId') userId: string, @Param('murmurId') murmurId: string) {
+    try {
+      return await this.murmursService.unlikeMurmur(+userId, +murmurId);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   @Get('own-timeline/:userId')
-  ownTimeline(
+  async ownTimeline(
     @Param('userId') userId: string,
     @Query('page') page?: string,
     @Query('perPage') perPage?: string,
   ) {
-    return this.murmursService.getOwnTimeline(+userId, Number(page) || 1, Number(perPage) || 10);
+    try {
+      return await this.murmursService.getOwnTimeline(+userId, Number(page) || 1, Number(perPage) || 10);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
+  @Get('follow-timeline/:userId')
+  async followTimeline(
+    @Param('userId') userId: string,
+    @Query('page') page?: string,
+    @Query('perPage') perPage?: string,
+  ) {
+    try {
+      return await this.murmursService.getFollowTimeline(+userId, Number(page) || 1, Number(perPage) || 10);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 }

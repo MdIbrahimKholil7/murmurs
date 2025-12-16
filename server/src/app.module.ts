@@ -8,6 +8,7 @@ import { Like } from './entities/like.entity';
 import { Murmur } from './entities/murmur.entity';
 import { UserModule } from './user/user.module';
 import { MurmursModule } from './murmurs/murmurs.module';
+import { FollowsModule } from './follow/follow.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { MurmursModule } from './murmurs/murmurs.module';
     TypeOrmModule.forFeature([User, Murmur, Like, Follow]),
     UserModule,
     MurmursModule,
+    FollowsModule
   ],
   controllers: [AppController],
   providers: [AppService],

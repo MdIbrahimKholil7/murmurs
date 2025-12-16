@@ -13,6 +13,6 @@ export class UsersService {
     if (await this.usersRepo.findOne({ where: { email: user.email } })) {
       throw new Error('user with this email already exists');
     }
-    return this.usersRepo.save(user);
+    return await this.usersRepo.save(user);
   }
 }

@@ -15,12 +15,12 @@ export class MurmursService {
     @InjectRepository(Follow) private readonly followsRepo: Repository<Follow>,
   ) { }
 
-  async createMurmur(userId: number, text: string) {
+  async createMurmur(userId: number, text: string): Promise<Murmur> {
     const user = await this.usersRepo.findOne({ where: { id: userId } });
     if (!user) throw new NotFoundException('User not found');
 
     const murmur = this.murmursRepo.create({ text, user });
-    return this.murmursRepo.save(murmur);
+    return await this.murmursRepo.save(murmur);
   }
 
   async deleteMurmur(userId: number, murmurId: number): Promise<Murmur> {

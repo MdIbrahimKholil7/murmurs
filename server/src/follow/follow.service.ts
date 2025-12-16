@@ -26,7 +26,7 @@ export class FollowsService {
         if (existing) return existing;
 
         const follow = this.followsRepo.create({ follower, following: followee });
-        return this.followsRepo.save(follow);
+        return await this.followsRepo.save(follow);
     }
 
     async unfollow(followerId: number, followeeId: number): Promise<Follow>{
@@ -34,7 +34,7 @@ export class FollowsService {
             where: { follower: { id: followerId }, following: { id: followeeId } },
         });
         if (!existing) throw new NotFoundException('Follow relationship not found');
-        return this.followsRepo.remove(existing);
+        return await this.followsRepo.remove(existing);
     }
 
 }

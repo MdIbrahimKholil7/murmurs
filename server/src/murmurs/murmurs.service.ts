@@ -36,6 +36,9 @@ export class MurmursService {
     const murmur = await this.murmursRepo.findOne({ where: { id: murmurId } });
     if (!murmur) throw new NotFoundException('Murmur not found');
 
+    const user = await this.usersRepo.findOne({ where: { id: userId } });
+    if (!user) throw new NotFoundException('User not found');
+
     const existing = await this.likesRepo.findOne({ where: { user: { id: userId }, murmur: { id: murmurId } } });
     if (existing) return existing;
 
@@ -46,6 +49,8 @@ export class MurmursService {
   async unlikeMurmur(userId: number, murmurId: number): Promise<Like> {
     const existing = await this.likesRepo.findOne({ where: { user: { id: userId }, murmur: { id: murmurId } } });
     if (!existing) throw new NotFoundException('Like not found');
+    const user = await this.usersRepo.findOne({ where: { id: userId } });
+    if (!user) throw new NotFoundException('User not found');
     return await this.likesRepo.remove(existing);
   }
 
@@ -55,7 +60,7 @@ export class MurmursService {
       where: {
         user: { id: userId },
       },
-      relations: ['user', 'likes'],
+      relations: ['user', 'likes', 'likes.user'],
       order: { id: 'DESC' },
       skip: (page - 1) * perPage,
       take: perPage,
@@ -63,18 +68,24 @@ export class MurmursService {
   }
 
   async getFollowTimeline(userId: number, page = 1, perPage = 10): Promise<Murmur[]> {
-    const follows = await this.followsRepo.find({ where: { follower: { id: userId } }, relations: ['following'] });
+    const follows = await this.followsRepo.find({
+      where: [
+        { follower: { id: userId } },
+        { following: { id: userId } },
+      ],
+      relations: ['follower', 'following'],
+    });
     if (!follows) throw new NotFoundException('Follow not found');
 
-    const followeeIds = follows.map(follow => follow.following.id);
+    const followeeIds = [...follows.map(follow => follow.following.id), userId];
 
     return await this.murmursRepo.createQueryBuilder('murmur')
       .where(`murmur.user.id IN (:...followeeIds)`, { followeeIds })
       .leftJoinAndSelect('murmur.user', 'user')
       .leftJoinAndSelect('murmur.likes', 'like')
       .leftJoinAndSelect('like.user', 'likeUser')
-      .select(['murmur.id', 'murmur.text', 'murmur.createdAt', 'user.id', 'user.name', 'likeUser.name'])
-      .orderBy('murmur.id', 'DESC')
+      .select(['murmur.id', 'murmur.text', 'murmur.createdAt', 'user.id', 'user.name', 'likeUser.name', 'likeUser.id', 'like'])
+      .orderBy('murmur.createdAt', 'DESC')
       .skip((page - 1) * perPage)
       .take(perPage)
       .getMany();

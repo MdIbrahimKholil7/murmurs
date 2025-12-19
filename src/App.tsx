@@ -4,12 +4,14 @@ import Timeline from './components/Timeline';
 import { User } from './axiosApi/userApi';
 import OwnProfile from './components/UserProfile';
 import UserFollow from './components/UserFollow';
+import OtherUserProfile from './components/OtherUserProfile';
 
 type Page = 'timeline' | 'profile' | 'user';
 
 function App() {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [currentPage, setCurrentPage] = useState<Page>('timeline');
+  const [profileUserId, setProfileUserId] = useState<number | null>(null);
 
   const handleLogin = (user: User) => {
     setCurrentUser(user);
@@ -18,7 +20,13 @@ function App() {
 
   const handleLogout = () => {
     setCurrentUser(null);
+    setProfileUserId(null);
     localStorage.removeItem('currentUser');
+  };
+
+  const handleViewProfile = (userId: number) => {
+    setProfileUserId(userId);
+    setCurrentPage('profile');
   };
 
   useEffect(() => {
@@ -57,7 +65,7 @@ function App() {
               Connect
             </button>
             <button
-              onClick={() => setCurrentPage('profile')}
+              onClick={() => handleViewProfile(currentUser.id)}
               style={{
                 ...styles.navButton,
                 ...(currentPage === 'profile' ? styles.navButtonActive : {}),
@@ -74,18 +82,24 @@ function App() {
 
       <main style={styles.main}>
         {currentPage === 'timeline' && (
-          <Timeline currentUserId={currentUser.id} />
+          <Timeline currentUserId={currentUser.id} onViewProfile={handleViewProfile} />
         )}
         {currentPage === 'user' && (
           <UserFollow currentUserId={currentUser.id} />
         )}
-        {currentPage === 'profile' && (
-          <OwnProfile
-            currentUserId={currentUser.id}
-            currentUserName={currentUser.name}
-            currentUserEmail={currentUser.email}
-          />
-        )}
+        {currentPage === 'profile' &&
+          (profileUserId && profileUserId !== currentUser.id ? (
+            <OtherUserProfile
+              currentUserId={currentUser.id}
+              otherUserId={profileUserId}
+            />
+          ) : (
+            <OwnProfile
+              currentUserId={currentUser.id}
+              currentUserName={currentUser.name}
+              currentUserEmail={currentUser.email}
+            />
+          ))}
       </main>
     </div>
   );

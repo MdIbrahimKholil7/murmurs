@@ -12,7 +12,7 @@ const UserFollow: React.FC<UserSearchProps> = ({ currentUserId }) => {
     const [following, setFollowing] = useState<number[]>([]);
     const [followers, setFollowers] = useState<User[]>([]);
     const [followingUsers, setFollowingUsers] = useState<User[]>([]);
-    const [activeTab, setActiveTab] = useState<'search' | 'followers' | 'following'>('search');
+    const [activeTab, setActiveTab] = useState<'user' | 'followers' | 'following'>('user');
     const [page, setPage] = useState(1);
     const perPage = 10;
 
@@ -21,12 +21,12 @@ const UserFollow: React.FC<UserSearchProps> = ({ currentUserId }) => {
     }, [currentUserId]);
 
     useEffect(() => {
-        getUsers({ page, perPage,currentUserId })
+        getUsers({ page, perPage, currentUserId })
     }, [page])
 
-    const getUsers = async ({ page, perPage,currentUserId }: { page: number; perPage: number;currentUserId: number }) => {
+    const getUsers = async ({ page, perPage, currentUserId }: { page: number; perPage: number; currentUserId: number }) => {
         try {
-            const users = await getAllUsers(page, perPage,currentUserId);
+            const users = await getAllUsers(page, perPage, currentUserId);
             setUsers(users);
         } catch (error) {
             console.error('Error fetching users:', error);
@@ -103,10 +103,10 @@ const UserFollow: React.FC<UserSearchProps> = ({ currentUserId }) => {
 
             <div style={styles.tabs}>
                 <button
-                    onClick={() => setActiveTab('search')}
+                    onClick={() => setActiveTab('user')}
                     style={{
                         ...styles.tab,
-                        ...(activeTab === 'search' ? styles.tabActive : {}),
+                        ...(activeTab === 'user' ? styles.tabActive : {}),
                     }}
                 >
                     Users
@@ -131,12 +131,12 @@ const UserFollow: React.FC<UserSearchProps> = ({ currentUserId }) => {
                 </button>
             </div>
 
-            {activeTab === 'search' && (
+            {activeTab === 'user' && (
                 <>
                     <div style={styles.usersList}>
                         {users.length === 0 ? (
                             <div style={styles.empty}>
-                                Search for users to connect with them
+                                No users found
                             </div>
                         ) : (
                             users.map(user => renderUserCard(user, true))

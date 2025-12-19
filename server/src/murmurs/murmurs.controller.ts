@@ -1,14 +1,15 @@
 import { Controller, Post, Delete, Param, Body, Get, Query, BadRequestException } from '@nestjs/common';
 import { MurmursService } from './murmurs.service';
+import { Murmur } from 'src/entities/murmur.entity';
 
 @Controller('/murmurs')
 export class MurmursController {
   constructor(private readonly murmursService: MurmursService) { }
 
   @Post('me/:userId')
-  async create(@Param('userId') userId: string, @Body('text') text: string) {
+  async create(@Param('userId') userId: string, @Body() body:Murmur) {
     try {
-      return await this.murmursService.createMurmur(+userId, text);
+      return await this.murmursService.createMurmur(+userId, body.text);
     } catch (error) {
       throw new BadRequestException(error.message);
     }

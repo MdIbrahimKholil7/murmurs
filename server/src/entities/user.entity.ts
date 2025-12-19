@@ -1,16 +1,37 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  OneToMany,
+  CreateDateColumn,
+} from 'typeorm';
+import { Murmur } from './murmur.entity';
+import { IsBoolean, IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
-@Entity()
+@Entity('users')
 export class User {
   @PrimaryGeneratedColumn()
   id!: number;
 
+  @IsString()
+  @IsNotEmpty()
   @Column()
   name!: string;
 
-  @Column()
+  @IsString()
+  @IsNotEmpty()
+  @IsEmail()
+  @Column({ unique: true })
   email!: string;
 
+  @IsOptional()
+  @IsBoolean()
   @Column({ default: true })
-  isActive!: boolean;
+  isActive?: boolean;
+
+  @CreateDateColumn()
+  createdAt!: Date;
+
+  @OneToMany(() => Murmur, murmur => murmur.user)
+  murmurs!: Murmur[];
 }

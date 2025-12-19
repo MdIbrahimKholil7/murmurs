@@ -6,10 +6,10 @@ interface MurmurCardProps {
   currentUserId: number;
   onDelete?: () => void;
   onLikeToggle?: () => void;
-
+  onViewProfile?: (userId: number) => void;
 }
 
-const MurmurCard: React.FC<MurmurCardProps> = ({ murmur, currentUserId, onDelete, onLikeToggle }) => {
+const MurmurCard: React.FC<MurmurCardProps> = ({ murmur, currentUserId, onDelete, onLikeToggle, onViewProfile }) => {
   const [isLiked, setIsLiked] = useState(
     murmur.likes ? murmur.likes?.some(like => like?.user?.id === currentUserId) : false
   );
@@ -50,13 +50,19 @@ const MurmurCard: React.FC<MurmurCardProps> = ({ murmur, currentUserId, onDelete
     }
   };
 
+  const handleViewProfile = () => {
+    if (onViewProfile) {
+      onViewProfile(murmur.user.id);
+    }
+  };
+
   const isOwnMurmur = murmur.user.id === currentUserId;
 
   return (
     <div style={styles.card}>
       <div style={styles.header}>
         <div>
-          <strong style={styles.userName}>{murmur.user.name}</strong>
+          <strong onClick={handleViewProfile} style={styles.userName}>{murmur.user.name}</strong>
           <span style={styles.date}>
             {new Date(murmur.createdAt).toLocaleString()}
           </span>
@@ -105,6 +111,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     fontSize: '16px',
     color: '#333',
     marginRight: '8px',
+    cursor: 'pointer',
   },
   date: {
     fontSize: '12px',

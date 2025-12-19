@@ -5,9 +5,10 @@ import { Pagination } from './Pagination';
 
 interface TimelineProps {
     currentUserId: number;
+    onViewProfile: (userId: number) => void;
 }
 
-const Timeline: React.FC<TimelineProps> = ({ currentUserId }) => {
+const Timeline: React.FC<TimelineProps> = ({ currentUserId, onViewProfile }) => {
     const [murmurs, setMurmurs] = useState<Murmur[]>([]);
     const [loading, setLoading] = useState(false);
     const [page, setPage] = useState(1);
@@ -98,6 +99,7 @@ const Timeline: React.FC<TimelineProps> = ({ currentUserId }) => {
                             currentUserId={currentUserId}
                             onLikeToggle={() => fetchTimeline(page)}
                             onDelete={() => fetchTimeline(page)}
+                            onViewProfile={onViewProfile}
                         />
                     ))}
                 </>

@@ -11,7 +11,7 @@ interface MurmurCardProps {
 
 const MurmurCard: React.FC<MurmurCardProps> = ({ murmur, currentUserId, onDelete, onLikeToggle }) => {
   const [isLiked, setIsLiked] = useState(
-    murmur.likes ? murmur.likes?.some(like => like.user.id === currentUserId) : false
+    murmur.likes ? murmur.likes?.some(like => like?.user?.id === currentUserId) : false
   );
   const [likeCount, setLikeCount] = useState(murmur.likes ? murmur.likes.length : 0);
   const [isDeleting, setIsDeleting] = useState(false);

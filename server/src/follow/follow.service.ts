@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { Follow } from '../entities/follow.entity';
 import { User } from '../entities/user.entity';
 
+
 @Injectable()
 export class FollowsService {
     constructor(
@@ -11,25 +12,32 @@ export class FollowsService {
         @InjectRepository(User) private readonly usersRepo: Repository<User>,
     ) { }
 
+
     async follow(followerId: number, followeeId: number): Promise<Follow> {
         if (followerId === followeeId) throw new BadRequestException("Cannot follow yourself");
+
 
         const follower = await this.usersRepo.findOne({ where: { id: followerId } });
         const followee = await this.usersRepo.findOne({ where: { id: followeeId } });
 
+
         if (!follower || !followee) throw new NotFoundException('User not found');
+
 
         const existing = await this.followsRepo.findOne({
             where: { follower: { id: followerId }, following: { id: followeeId } },
         });
 
+
         if (existing) return existing;
+
 
         const follow = this.followsRepo.create({ follower, following: followee });
         return await this.followsRepo.save(follow);
     }
 
-    async unfollow(followerId: number, followeeId: number): Promise<Follow>{
+
+    async unfollow(followerId: number, followeeId: number): Promise<Follow> {
         const existing = await this.followsRepo.findOne({
             where: { follower: { id: followerId }, following: { id: followeeId } },
         });
@@ -37,4 +45,21 @@ export class FollowsService {
         return await this.followsRepo.remove(existing);
     }
 
+
+    async getFollowers(userId: number): Promise<User[]> {
+        const follows = await this.followsRepo.find({
+            where: { following: { id: userId } },
+            relations: ['follower'],
+        });
+        return follows.map(follow => follow.follower);
+    }
+
+
+    async getFollowing(userId: number): Promise<User[]> {
+        const follows = await this.followsRepo.find({
+            where: { follower: { id: userId } },
+            relations: ['following'],
+        });
+        return follows.map(follow => follow.following);
+    }
 }

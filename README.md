@@ -1,119 +1,84 @@
-# Web Application Test
+# Murmur Web Application
 
-# Note
-Make sure you run this application with the following tech stack.
+Murmur is a simple web application similar to Twitter, built using **NestJS**, **React**, and **MySQL**.  
+Users can post short messages ("murmurs"), follow other users, like murmurs, and view timelines.
 
-- NestJS
-- React
-- MySQL
+---
 
-## Theme
+## Features
 
-Please implement web application which is able to show murmur(=tweet) by user. (this application is similar to Twitter)
+- User can **follow** other users
+- Timeline displays murmurs from followed users
+- Users can **post** and **delete** their own murmurs
+- Users can **like** other users' murmurs
+- Pagination support (10 murmurs per page)
+- View own and other users' profiles with murmurs and follower/following count
+- **Frontend tabs** for navigating between Users, Followers, and Following
+- Optional: minimal authentication for signup/login
 
-## Specifications
+> **Note:** You must **login or sign up** before using the application. Basic signup is required.
 
-- The user can follow other users.
-- By following, a list of murmurs posted by other users is displayed in the timeline.
-- The user can post murmur as many times as he wants.
-- Only the user who posted can delete his murmur.
-- The user can add LIKE to another person's murmur.
-- [optional] User authentication.
+---
 
-### DB
+## Tech Stack
 
-There are two sample tables in this application.
-Please consider and add columns to below tables.
-Further more I think you need more tables, so it's possible to add new tables depending on below specification.
+- **Backend:** NestJS, MySQL
+- **Frontend:** React, TypeScript
+- **Database:** MySQL 8.x
+- **Package Managers:** npm, yarn
+- **Other Tools:** Docker (for MySQL setup)
 
-e.g.
+---
 
-- murmurs
-- users
+## Frontend Overview
 
-### Server
+### Tabs
 
-Please implement REST API. There are three sample endpoints below.
-I think you need more endpoints, so you add more endpoints as needed.
+The frontend has three main tabs for user navigation:  
 
-e.g.
-* `[GET] /api/murmurs/`
-* `[POST] /api/me/murmurs/`
-* `[DELETE] /api/me/murmurs/:id/`
+1. **Users**  
+   - Displays all users registered in the application
+   - Allows following/unfollowing other users
+   - Clicking a user opens their profile
 
-### Client
+2. **Followers**  
+   - Shows users who are following the current logged-in user
+   - Navigate to their profiles to see their murmurs
 
-Please implement below function using React.
-If you want to add new function after complete to implement below function, it's possible to add and we evaluate your original function.
+3. **Following**  
+   - Shows users that the current user is following
+   - Clicking on a user navigates to their profile
 
-- Timeline
-  - List of Murmur information (e.g. text, LIKE count)
-  - LIKE button each murmur.
-  - Show 10 murmur per page. (need to implement pagination)
-- Murmur Detail
-  - Murmur Information (e.g. text, LIKE count)
-- Own User Detail 
-  - User information (e.g. name, followCount, followedCount)
-  - List of own murmurs
-  - Button for delete a murmur
-- Other User Detail
-  - User information (e.g. name, followCount, followedCount)
-  - List of the user's murmurs
+### Timeline
 
-### Point
+- The **Timeline** displays murmurs from users that the current user is following
+- Shows murmur text, like count, and the author
+- Users can like/unlike murmurs directly from the timeline
+- Pagination shows 10 murmurs per page
 
-- You can proceed with the implementation freely.
-- Of course, you can also search the Web or refer to the books you have.
-- The deadline is 5 days after the assignment is handed over. The date and time will be announced separately.
-- Please aim to implement all the features in client and backend. CSS is not evaluated, so the minimum design style is fine.
-- You can ask any questions about the content. If any question, please send email to (keita.ojima@venturas-bd.com) (salvana.ahmed@venturas-bd.com) , (uedayoriko@venturas-bd.com). 
-(sohana.shomi@venturas-bd.com). (rahat.redwanul@venturas-bd.com). Please note that I do not guarantee an immediate reply.
+### Profile Pages
 
-## How to proceed with development
+- **Own Profile**
+  - Displays name, follower/following counts
+  - Lists all murmurs by the logged-in user
+  - Delete button available for own murmurs
+- **Other Users' Profile**
+  - Click on the user name from the timeline card
+  - Displays name, follower/following counts
+  - Lists all murmurs by that user
+  - Only LIKE option is available
 
-1. Download `webapp_test.zip` from email. 
-2. Create repository for your private GitHub account and push unzipped files to main branch.
-3. Give the administrator privileges of the repository to the following Github id.
-   - ojimac
-4. Create `develop` branch from main.
-5. Create the feature branch for your develop branch, submit a pull request as appropriate, and merge it into your develop branch.
-6. When development is complete, create a Pull request from develop branch to main branch.
-  In the pull request overview, include the following:
-   - Appeal Points
-   - Implemented Features
-   - Unimplemented Features
-   - Impressions
+> The tabs and profiles are connected: clicking a user in any tab navigates to their profile, and timeline shows their murmurs if followed.
 
-## How to start the development environment
-### Programming Language
+---
 
-- Typescript
+## Setup Instructions
 
-### Directory structure
+### Database
 
-- /src -> Frontend (React)
-- /server -> Backend (NestJS)
-- /db -> Database (MySQL 8.x)
-
-### install modules
-
-It is assumed that node(v20.x.x), npm and yarn are installed.
-The ability to build a development environment is also the subject of this test, so even if an error occurs, please resolve it on your own.
-
-### setup project
-#### DB
-1. cd db && docker compose build
-1. docker compose up -d
-
-#### Server
-1. cd server && npm install
-1. npm run start:dev
-
-#### Client
-1. cd src && yarn install
-1. yarn dev
+```bash
+cd db
+docker compose build
+docker compose up -d
 
 
-### How to confirm to success to build environment
-1. You access to http://localhost:3000/
-1. It's success if render html.
